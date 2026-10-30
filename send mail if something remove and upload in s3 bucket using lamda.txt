@@ -1,0 +1,318 @@
+AWS S3 + Lambda: Send an Email When a File Is Updated or Deleted
+We will build an AWS project that automatically sends you an email whenever someone updates or deletes a file in an S3 bucket.
+
+1. Amazon S3
+
+Stores your files and detects object changes.
+
+
+
+
+2. AWS Lambda
+
+Runs automatically when an S3 event occurs.
+
+
+
+
+3. Amazon SNS
+
+Sends an email notification to your subscribed email address.
+
+
+
+We'll use S3 Event Notifications → Lambda → SNS → Email. This approach does not require you to run a server or check the bucket manually.
+
+
+
+Step 1: Create an S3 bucket
+1. Sign in to the AWS Management Console.
+2. Search for S3.
+3. Click Create bucket.
+4. Enter a globally unique name, such as my-file-monitor-2026-abc123.
+5. Select your AWS Region. Use the same Region for S3, Lambda, and SNS.
+6. Keep Block Public Access enabled.
+7. Click Create bucket.
+Keep the bucket name handy. You will use it in the next steps.
+Step 2: Create an SNS topic for email alerts
+1. Search for Amazon SNS in the AWS Console.
+2. Open Topics and click Create topic.
+3. Choose Standard.
+4. Enter the topic name S3-File-Alerts.
+5. Click Create topic.
+6. Open the topic and click Create subscription.
+7. Choose Email as the protocol.
+8. Enter the email address where you want to receive alerts.
+9. Click Create subscription.
+10. Open your inbox and click the confirmation link in the AWS SNS email.
+Important: Confirm the email subscription
+
+Until you click the confirmation link, SNS will not send you the notifications.
+Step 3: Create the Lambda function
+1. Search for AWS Lambda in the console.
+2. Click Create function.
+3. Select Author from scratch.
+4. Enter these settings:
+Setting	Value
+Function name	S3-File-Email-Alert
+Runtime	Python 3.12
+Architecture	x86_64
+Execution role	Create a new role with basic Lambda permissions
+
+5. Click Create function.
+
+AWS creates a Lambda execution role for logging. Next, we'll give that role permission to send email notifications through SNS. 
+AWS Lambda
+
+Step 4: Give Lambda permission to publish email alerts
+This is an important step. Without the permission, your function may run successfully but fail to send the email.
+1. Open your Lambda function.
+2. Select Configuration.
+3. Click Environment variables.
+4. Click Edit, then Add environment variable.
+5. Enter:
+- Key: SNS_TOPIC_ARN
+- Value: the ARN of your SNS topic.
+To find the ARN, open SNS → Topics → S3-File-Alerts and copy the Topic ARN. It looks similar to:
+
+arn:aws:sns:ap-south-1:123456789012:S3-File-Alerts
+
+Use your actual ARN, not this example.
+
+6. Click Save.
+
+Now add SNS publishing permission:
+1. Open Configuration → Permissions in Lambda.
+2. Click the execution role name to open it in IAM.
+3. Click Add permissions → Create inline policy.
+4. Select the JSON policy editor.
+5. Paste this policy, replacing the example ARN with your real topic ARN.
+
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:ap-south-1:123456789012:S3-File-Alerts"
+    }
+  ]
+}
+
+
+
+6. Click Next.
+7. Enter the policy name LambdaPublishToS3Alerts.
+8. Click Create policy.
+Keep the existing basic Lambda logging permissions. The new policy adds permission to publish to your specific SNS topic. 
+AWS re:Post+1
+
+Step 5: Add Python code to Lambda
+Go back to Lambda → Functions → S3-File-Email-Alert.
+1. Open the Code tab.
+2. Open lambda_function.py.
+3. Delete the existing code.
+4. Paste the following code.
+
+
+
+import os
+import json
+import boto3
+import urllib.parse
+from datetime import datetime, timezone
+
+sns = boto3.client("sns")
+
+SNS_TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
+
+
+def lambda_handler(event, context):
+    records = event.get("Records", [])
+
+    for record in records:
+        event_name = record.get("eventName", "Unknown")
+        bucket = record.get("s3", {}).get(
+            "bucket", {}
+        ).get("name", "Unknown")
+
+        raw_key = record.get("s3", {}).get(
+            "object", {}
+        ).get("key", "Unknown")
+
+        file_name = urllib.parse.unquote_plus(raw_key)
+
+        if event_name.startswith("ObjectRemoved:"):
+            action = "FILE DELETED"
+        elif event_name.startswith("ObjectCreated:"):
+            action = "FILE CREATED OR UPLOADED/OVERWRITTEN"
+        else:
+            action = event_name
+
+        event_time = record.get(
+            "eventTime",
+            datetime.now(timezone.utc).isoformat()
+        )
+
+        subject = f"S3 Alert: {action}"
+        message = f"""
+S3 BUCKET FILE ALERT
+
+Action: {action}
+Bucket: {bucket}
+File name: {file_name}
+Event type: {event_name}
+Time: {event_time}
+
+This notification was generated automatically
+by AWS Lambda.
+"""
+
+        response = sns.publish(
+            TopicArn=SNS_TOPIC_ARN,
+            Subject=subject[:100],
+            Message=message
+        )
+
+        print(json.dumps({
+            "action": action,
+            "bucket": bucket,
+            "file": file_name,
+            "sns_message_id": response.get("MessageId")
+        }))
+
+    return {
+        "statusCode": 200,
+        "body": "S3 email alert processing completed"
+    }
+
+
+
+5. Click Deploy.
+
+How this code works:
+- When S3 reports an object creation event, the function sends an email describing the uploaded or overwritten file.
+- When S3 reports an object removal event, the function sends a deletion alert.
+- The email includes the bucket name, filename, event type and timestamp.
+- SNS delivers the email to your confirmed subscription.
+One important distinction: an S3 object-created event can represent either a first upload or an overwrite. The code groups these together; it does not independently prove that the file existed before the upload. 
+AWS Lambda+1
+
+Step 6: Connect the S3 bucket to Lambda
+This step tells AWS to run your function automatically when a file is uploaded, overwritten, or deleted. 
+AWS Lambda+1
+
+1. Open Amazon S3.
+2. Click your bucket name.
+3. Open the Properties tab.
+4. Scroll down to Event notifications.
+5. Click Create event notification.
+Fill in the configuration:
+Event notification settings
+Use these settings for your S3 bucket.
+Event nameFile-Change-Email-Alert
+
+
+Event typesSelect both of these categories:
+All object create events
+
+Detects uploads, copies and overwrites.
+
+
+All object delete events
+
+Detects supported object deletion events.
+
+
+
+
+DestinationLambda function
+
+Lambda functionS3-File-Email-Alert
+
+
+6. Leave the prefix and suffix filters empty to monitor all files.
+7. Click Save changes.
+Make sure your Lambda function and S3 bucket are in the same AWS Region. The S3 console normally adds the necessary permission for S3 to invoke Lambda when configuring the trigger. 
+Amazon Simple Storage Service+1
+
+Step 7: Test your project
+
+
+
+
+
+
+
+
+
+Test A: Upload a file
+1. Open your S3 bucket.
+2. Click Upload.
+3. Upload a file named test.txt.
+4. Check your email inbox.
+Expected subject: S3 Alert: FILE CREATED OR UPLOADED/OVERWRITTEN
+
+
+
+
+
+
+
+
+
+
+
+
+Test B: Update the file
+1. Edit test.txt on your computer.
+2. Upload it again with the same name to the same bucket.
+3. Confirm that you want to replace the existing file.
+4. Check your email.
+Expected: an object-created notification indicating the file was uploaded or overwritten.
+
+
+
+
+
+
+
+
+
+
+
+
+Test C: Delete the file
+1. Select test.txt in your S3 bucket.
+2. Click Delete.
+3. Confirm the deletion.
+4. Check your email.
+Expected subject: S3 Alert: FILE DELETED
+
+
+
+Step 8: If you don't receive an email
+Check these items in order:
+- SNS subscription: Open SNS → Subscriptions and verify its status is Confirmed.
+- SNS topic ARN: Verify the SNS_TOPIC_ARN environment variable contains your actual topic ARN.
+- IAM permissions: Ensure the Lambda execution role has sns:Publish permission for that topic.
+- S3 trigger: Confirm that both object creation and object deletion events are enabled.
+- CloudWatch logs: Open Lambda → Monitor → View CloudWatch logs and check for errors such as AccessDeniedException or missing environment variables.
+- AWS Region: Confirm that the bucket, Lambda function and SNS topic are in the same Region.
+AWS event notifications are delivered at least once, so duplicate notifications are possible. 
+Amazon Simple Storage Service+1
+
+Final result
+Your project will work like this:
+Someone uploads or overwrites a file
+
+S3 invokes Lambda → Lambda publishes to SNS → you receive an email.
+
+Someone deletes a file
+
+S3 invokes Lambda → Lambda publishes to SNS → you receive a deletion email.
+
+One final note: If you need separate alerts that explicitly say “existing file updated” versus “new file created,” rather than combining them, you will need additional logic, such as checking S3 object versions or recording prior object state. The setup above reliably reports the supported creation/upload and deletion events without that extra distinction.
+
+

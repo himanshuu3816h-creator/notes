@@ -1,0 +1,110 @@
+1. AWS -> EC2 Instances Create
+
+[3 -> key -> ansible.ppk]
+
+server 16.178.180.197   172.31.42.74
+node1 3.26.155.3        172.31.41.73
+node2 3.107.45.1        172.31.38.24
+
+# Connect all the instances with PuTTy
+# Change the hostname
+	server
+	node1
+	node2
+# Update and Upgrade all the machines.
+	sudo apt update && sudo apt upgrade
+
+###########################DEPENDENCY################################################
+# which python3
+/usr/bin/python3    [if python3 is not installed, kindly install it]
+
+# which pip
+/usr/bin/pip		[in case pip is not there, install it with 'apt install pip']
+######################################################################################
+
+
+pip -V 		[To check version of pip]
+pip 25.1.1 from /usr/lib/python3/dist-packages/pip (python 3.13)
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+$ python3 -m pip install --user ansible    [Current User -> ansible install]
+
+
+python3 -m venv /home/admin/myansible/
+cd /home/admin/myansible
+
+echo $PATH
+
+export
+/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/admin/myansible/bin
+
+pip install ansible
+ansible --version
+
+===============Installation of Ansible Completed ===============================================
+
+# Ping all the machines with the name.
+
+/etc/hosts -> Static DNS
+myinventory.ini
+[nodes]
+node1
+
+ansible nodes -m ping -i inventory/myinventory.ini
+
+ping -> pong (successful)
+
+
+###########
+Playbook
+admin@server:~/myansible$ cat playbook.yaml
+- name: Install Tree
+  hosts: nodes
+  become: true
+  tasks:
+   - name: update
+     ansible.builtin.apt:
+       update_cache: true
+
+   - name: install
+     ansible.builtin.apt:
+       name: apache2
+       state: latest
+
+
+
+ansible-playbook -i myinventory.ini playbook
+
+
+2nd day task
+- name: Install Tree
+  hosts: server
+  remote_user: iacsd
+  become: yes
+  tasks:
+   - name: update
+     ansible.builtin.apt:
+       update_cache: true
+
+   - name: install
+     ansible.builtin.apt:
+       name: tree
+       state: latest
+
+   - name: install
+     ansible.builtin.apt:
+       name: apache2
+       state: latest
+
+   -  name: Install
+      ansible.builtin.apt:
+        name: docker.io
+        state: latest
+
+   - name: install
+     ansible.builtin.user:
+       name: iacsd
+       group: docker
+
+
