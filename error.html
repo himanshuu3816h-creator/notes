@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Page Not Found</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #17113c, #40216b, #9b3b83);
+    color: white;
+}
+
+/* Background circles */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    animation: float 7s infinite ease-in-out;
+}
+
+.circle.one {
+    width: 250px;
+    height: 250px;
+    top: -60px;
+    left: -50px;
+}
+
+.circle.two {
+    width: 180px;
+    height: 180px;
+    bottom: -40px;
+    right: 10%;
+    animation-delay: 2s;
+}
+
+.circle.three {
+    width: 100px;
+    height: 100px;
+    top: 15%;
+    right: 15%;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+}
+
+/* Main content */
+.container {
+    text-align: center;
+    padding: 30px;
+    max-width: 700px;
+    position: relative;
+    z-index: 2;
+}
+
+.error-code {
+    font-size: clamp(100px, 22vw, 190px);
+    font-weight: 900;
+    letter-spacing: 10px;
+    line-height: 1;
+    background: linear-gradient(90deg, #ffb3ec, #ffffff, #ffcb8e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 10px 50px rgba(255,255,255,0.15);
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 5px #ff75d5); }
+    to { filter: drop-shadow(0 0 25px #ff75d5); }
+}
+
+.icon {
+    font-size: 65px;
+    margin: 20px 0;
+    animation: rotate 5s infinite linear;
+    display: inline-block;
+}
+
+@keyframes rotate {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+}
+
+h1 {
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #e3d8f4;
+    margin-bottom: 30px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.home {
+    background: linear-gradient(90deg, #ff70c9, #ffb47d);
+    color: #321344;
+}
+
+.back {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.6);
+}
+
+button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.footer {
+    margin-top: 55px;
+    font-size: 13px;
+    color: #cbb8e5;
+}
+
+@media(max-width: 500px) {
+    h1 { font-size: 27px; }
+    p { font-size: 15px; }
+    .container { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="circle one"></div>
+<div class="circle two"></div>
+<div class="circle three"></div>
+
+<div class="container">
+
+    <div class="icon">🚀</div>
+
+    <div class="error-code">404</div>
+
+    <h1>Oops! Page Not Found</h1>
+
+    <p>
+        Looks like you've wandered into the unknown.
+        The page you're looking for might have been removed,
+        renamed, or is temporarily unavailable.
+    </p>
+
+    <div class="buttons">
+        <button class="home" onclick="location.href='index.html'">
+            🏠 Back to Home
+        </button>
+
+        <button class="back" onclick="history.back()">
+            ← Go Back
+        </button>
+    </div>
+
+    <div class="footer">
+        © 2026 | Designed with ❤️
+    </div>
+
+</div>
+
+</body>
+</html>

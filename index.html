@@ -2,240 +2,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tousif Pravej | Medical Store</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f1f8f6;
-            color: #243b35;
-            line-height: 1.6;
-        }
-
-        header {
-            background: linear-gradient(135deg, #087f5b, #20b486);
-            color: white;
-            text-align: center;
-            padding: 45px 20px;
-        }
-
-        header h1 {
-            font-size: 38px;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 17px;
-        }
-
-        nav {
-            background: #075c43;
-            text-align: center;
-            padding: 14px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .hero {
-            background: white;
-            border-radius: 15px;
-            padding: 35px;
-            text-align: center;
-            box-shadow: 0 5px 18px #00000010;
-        }
-
-        .hero h2 {
-            color: #087f5b;
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 14px;
-            text-align: center;
-            box-shadow: 0 4px 15px #0000000d;
-        }
-
-        .card h3 {
-            color: #087f5b;
-            margin-bottom: 8px;
-        }
-
-        .amount {
-            font-size: 30px;
-            font-weight: bold;
-            color: #e67e22;
-            margin: 10px 0;
-        }
-
-        .section {
-            background: white;
-            padding: 30px;
-            margin: 22px 0;
-            border-radius: 14px;
-        }
-
-        .section h2 {
-            color: #087f5b;
-            margin-bottom: 12px;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #d9f5e9;
-            color: #075c43;
-            padding: 8px 14px;
-            border-radius: 25px;
-            margin: 6px 4px;
-            font-size: 14px;
-        }
-
-        footer {
-            background: #075c43;
-            color: white;
-            text-align: center;
-            padding: 25px 15px;
-            margin-top: 35px;
-        }
-
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 29px;
-            }
-
-            nav a {
-                display: inline-block;
-                margin: 5px 8px;
-            }
-
-            .hero {
-                padding: 25px 16px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hill Climb Adventure</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: #182b40;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+h1 { color: #ffd43b; margin: 15px 0 5px; }
+#game {
+    display: block;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    margin: 12px auto;
+    background: #80d9f5;
+    border: 4px solid white;
+    border-radius: 12px;
+}
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    padding: 10px;
+    font-size: 18px;
+}
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    padding: 15px;
+}
+button {
+    padding: 16px 28px;
+    border: none;
+    border-radius: 12px;
+    background: #ffb52e;
+    color: #222;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: none;
+}
+button:active { background: #ffdf75; }
+#restart { background: #42d392; }
+small { color: #c8d7e8; }
+</style>
 </head>
-
 <body>
 
-    <header>
-        <h1>💊 Tousif Pravej</h1>
-        <p>Your Local Medical Store Owner in Murshidabad</p>
-        <p>Healthcare • Wellness • Customer Care</p>
-    </header>
+<h1>🏎️ HILL CLIMB ADVENTURE</h1>
+<small>Climb the hills, collect coins and don't crash!</small>
 
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#achievement">Achievement</a>
-        <a href="#services">Services</a>
-    </nav>
+<div class="stats">
+    <span>💰 Coins: <b id="coins">0</b></span>
+    <span>⛽ Fuel: <b id="fuel">100</b>%</span>
+    <span>📏 Distance: <b id="distance">0</b> m</span>
+    <span>🚀 Speed: <b id="speed">0</b></span>
+</div>
 
-    <div class="container">
+<canvas id="game" width="1000" height="500"></canvas>
 
-        <section class="hero" id="home">
-            <h2>Welcome to Our Healthcare Corner</h2>
-            <p>
-                Dedicated to making everyday healthcare products
-                accessible to customers in Murshidabad.
-            </p>
-            <p style="margin-top: 15px;">
-                <span class="tag">Trusted Service</span>
-                <span class="tag">Health & Wellness</span>
-                <span class="tag">Customer First</span>
-            </p>
-        </section>
+<div class="controls">
+    <button id="brake">◀ BRAKE</button>
+    <button id="gas">GAS ▶</button>
+    <button id="restart">↻ RESTART</button>
+</div>
 
-        <section class="stats" id="achievement">
-            <div class="card">
-                <h3>Annual medicine Sales</h3>
-                <div class="amount">₹1,000,000</div>
-                <p>Reported yearly sales achievement</p>
-            </div>
+<small>Keyboard: ← Brake | → Accelerate | R Restart</small>
 
-            <div class="card">
-                <h3>Average Monthly Sales</h3>
-                <div class="amount">₹8,333</div>
-                <p>Approximate monthly average</p>
-            </div>
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-            <div class="card">
-                <h3>Location</h3>
-                <div class="amount">📍</div>
-                <p>Murshidabad, West Bengal</p>
-            </div>
-        </section>
+const W = canvas.width, H = canvas.height;
 
-        <section class="section" id="about">
-            <h2>About Tousif Pravej</h2>
-            <p>
-                Tousif Pravej is presented here as a medical store owner
-                serving the local community in Murshidabad, West Bengal.
-                His store focuses on healthcare essentials, personal
-                wellness products, and everyday medical supplies.
-            </p>
-        </section>
+let car, camera, coins, fuel, distance, gameOver, won;
+let keys = { gas:false, brake:false };
+let objects = [];
+let terrain = [];
+let frame = 0;
 
-        <section class="section">
-            <h2>📈 Business Highlight</h2>
-            <p>
-                A reported annual sales figure of ₹1 lakh in condoms
-                highlights demand for personal wellness products.
-                Responsible sexual health awareness and access to
-                reliable products are important parts of public health.
-            </p>
-            <p style="margin-top: 12px; color: #64748b; font-size: 13px;">
-                Note: Sales figures are supplied for this sample webpage
-                and have not been independently verified.
-            </p>
-        </section>
+function heightAt(x) {
+    return 365
+      + 65 * Math.sin(x * 0.006)
+      + 28 * Math.sin(x * 0.015)
+      + 12 * Math.sin(x * 0.032);
+}
 
-        <section class="section" id="services">
-            <h2>Store Categories</h2>
-            <p>Example categories that can be customized for the store:</p>
-            <div style="margin-top: 12px;">
-                <span class="tag">General Healthcare</span>
-                <span class="tag">Personal Wellness</span>
-                <span class="tag">First Aid</span>
-                <span class="tag">Hygiene Products</span>
-                <span class="tag">Health Essentials</span>
-            </div>
-        </section>
+function reset() {
+    car = { x:100, y:250, vx:0, vy:0, angle:0, av:0 };
+    camera = 0;
+    coins = 0;
+    fuel = 100;
+    distance = 0;
+    gameOver = false;
+    won = false;
+    frame = 0;
+    objects = [];
 
-    </div>
+    for(let x=450; x<20000; x+=300) {
+        objects.push({
+            x,
+            y: heightAt(x)-75-Math.random()*35,
+            type: Math.random() > 0.17 ? "coin":"fuel",
+            taken:false
+        });
+    }
+    updateStats();
+}
 
-    <footer>
-        <h3>Tousif Pravej | Medical Store</h3>
-        <p>Murshidabad, West Bengal, India</p>
-        <p style="margin-top: 8px;">Healthcare and wellness for the community.</p>
-    </footer>
+function updateStats() {
+    document.getElementById("coins").textContent = coins;
+    document.getElementById("fuel").textContent = Math.max(0,Math.floor(fuel));
+    document.getElementById("distance").textContent = distance;
+    document.getElementById("speed").textContent = Math.abs(Math.round(car.vx));
+}
 
+function drawTerrain() {
+    ctx.beginPath();
+    ctx.moveTo(0,H);
+
+    for(let x=camera; x<camera+W+20; x+=8) {
+        ctx.lineTo(x-camera,heightAt(x));
+    }
+
+    ctx.lineTo(W,H);
+    ctx.closePath();
+    ctx.fillStyle = "#64b34c";
+    ctx.fill();
+
+    ctx.beginPath();
+    for(let x=camera; x<camera+W+20; x+=8) {
+        let sx=x-camera;
+        if(x===camera) ctx.moveTo(sx,heightAt(x));
+        else ctx.lineTo(sx,heightAt(x));
+    }
+    ctx.strokeStyle="#327b35";
+    ctx.lineWidth=7;
+    ctx.stroke();
+}
+
+function drawBackground() {
+    let sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,"#65c8ef");
+    sky.addColorStop(1,"#d5f5ff");
+    ctx.fillStyle=sky;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle="#fff";
+    for(let i=0;i<5;i++) {
+        let x=((i*250-camera*0.15)%1200+1200)%1200;
+        ctx.beginPath();
+        ctx.arc(x,90+i%2*45,25,0,Math.PI*2);
+        ctx.arc(x+28,85+i%2*45,35,0,Math.PI*2);
+        ctx.arc(x+60,95+i%2*45,23,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    ctx.fillStyle="#9acb9c";
+    ctx.beginPath();
+    ctx.moveTo(0,310);
+    for(let x=0;x<=W;x+=5)
+        ctx.lineTo(x,300+35*Math.sin((x+camera*.25)*.008));
+    ctx.lineTo(W,H); ctx.lineTo(0,H);
+    ctx.fill();
+}
+
+function drawCar() {
+    ctx.save();
+    ctx.translate(car.x-camera,car.y);
+    ctx.rotate(car.angle);
+
+    // Car body
+    ctx.fillStyle="#e83b35";
+    ctx.beginPath();
+    ctx.roundRect(-48,-23,96,30,9);
+    ctx.fill();
+
+    // Window
+    ctx.fillStyle="#bdeeff";
+    ctx.beginPath();
+    ctx.moveTo(-23,-23);
+    ctx.lineTo(-10,-43);
+    ctx.lineTo(20,-43);
+    ctx.lineTo(34,-23);
+    ctx.closePath();
+    ctx.fill();
+
+    // Wheels
+    for(let x of [-30,30]) {
+        ctx.fillStyle="#222";
+        ctx.beginPath();
+        ctx.arc(x,10,15,0,Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle="#bbb";
+        ctx.beginPath();
+        ctx.arc(x,10,6,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
+function drawObjects() {
+    objects.forEach(o=>{
+        if(o.taken) return;
+        let x=o.x-camera;
+        if(x < -30 || x > W+30) return;
+
+        ctx.fillStyle=o.type==="coin"?"#ffcf27":"#e74c3c";
+        ctx.beginPath();
+        ctx.arc(x,o.y,14,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle="white";
+        ctx.font="bold 16px Arial";
+        ctx.textAlign="center";
+        ctx.fillText(o.type==="coin"?"$":"F",x,o.y+6);
+    });
+}
+
+function update() {
+    if(gameOver) return;
+
+    frame++;
+
+    if(keys.gas && fuel>0) {
+        car.vx += 0.16;
+        fuel -= 0.035;
+    }
+    if(keys.brake) {
+        car.vx -= 0.13;
+    }
+
+    car.vx *= 0.992;
+    car.vx=Math.max(-5,Math.min(8,car.vx));
+
+    car.vy += 0.32;
+    car.x += car.vx;
+    car.y += car.vy;
+
+    // Ground collision
+    let ground=heightAt(car.x);
+    if(car.y+22 >= ground) {
+        car.y=ground-22;
+        car.vy=0;
+
+        let slope=(heightAt(car.x+10)-heightAt(car.x-10))/20;
+        let target=Math.atan(slope);
+
+        car.angle += (target-car.angle)*0.15;
+        car.av=0;
+    }
+
+    camera=Math.max(0,car.x-300);
+    distance=Math.max(0,Math.floor(car.x/10));
+
+    // Collect items
+    objects.forEach(o=>{
+        if(!o.taken &&
+           Math.hypot(car.x-o.x,car.y-o.y)<40) {
+            o.taken=true;
+            if(o.type==="coin") coins++;
+            else fuel=Math.min(100,fuel+30);
+        }
+    });
+
+    if(fuel<=0 && Math.abs(car.vx)<0.5) {
+        gameOver=true;
+    }
+
+    // Crash detection
+    if(Math.abs(car.angle)>1.55) gameOver=true;
+    if(car.y>H+100) gameOver=true;
+
+    updateStats();
+}
+
+function draw() {
+    drawBackground();
+    drawTerrain();
+    drawObjects();
+    drawCar();
+
+    if(gameOver) {
+        ctx.fillStyle="rgba(0,0,0,0.7)";
+        ctx.fillRect(0,0,W,H);
+        ctx.fillStyle="#fff";
+        ctx.textAlign="center";
+        ctx.font="bold 48px Arial";
+        ctx.fillText("GAME OVER!",W/2,H/2);
+        ctx.font="22px Arial";
+        ctx.fillText("Coins: "+coins+" | Distance: "+distance+" m",W/2,H/2+45);
+        ctx.fillText("Press R or RESTART to play again",W/2,H/2+85);
+    }
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+function bindButton(id,key) {
+    let b=document.getElementById(id);
+    b.addEventListener("pointerdown",e=>{
+        e.preventDefault();
+        keys[key]=true;
+    });
+    ["pointerup","pointerleave","pointercancel"].forEach(evt=>{
+        b.addEventListener(evt,()=>keys[key]=false);
+    });
+}
+
+bindButton("gas","gas");
+bindButton("brake","brake");
+
+document.getElementById("restart").onclick=reset;
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight") keys.gas=true;
+    if(e.key==="ArrowLeft") keys.brake=true;
+    if(e.key.toLowerCase()==="r") reset();
+});
+document.addEventListener("keyup",e=>{
+    if(e.key==="ArrowRight") keys.gas=false;
+    if(e.key==="ArrowLeft") keys.brake=false;
+});
+
+reset();
+loop();
+</script>
 </body>
 </html>
