@@ -52,3 +52,14 @@ sudo puppet config print server
 output - pserver
 
 
+Command	Purpose
+puppet --version	                               Check version
+sudo systemctl start puppetserver	               Start server
+sudo systemctl start puppet	                     Start agent
+sudo systemctl stop puppet	                     Stop agent
+sudo puppet agent -t	                           Run agent once
+sudo puppetserver ca list 	                     List pending certificates
+sudo puppetserver ca sign --certname agent-1	   Approve agent
+sudo systemctl status puppetserver	             Check server  
+
+
